@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IndexedDB Demo </title>
+</head>
+<body>
+
+    <input type="text" value="DB Name" id = "txtDB">
+    <input type="text" value="1" id = "txtVersion">
+    <button id = "btnCreate">Create</button>
+
+    <script>
+        
+        const btnCreateDB = document.getElementById('btnCreate');
+        btnCreateDB.addEventListener("click", createDB)
+
+        function createDB () {
+
+        const DBName = document.getElementById("txtDB").value;
+        console.log(DBName);    
+        const dbVersion  = document.getElementById("txtVersion").value;
+        const request  = indexedDB.open(DBName, dbVersion);
+        //All of this APIs are asynchronous
+        //on upgrade needed
+        request.onupgradeneeded = e => {
+            const DB = e.target.result;
+            console.log(DB);
+
+            const personal_Notes = DB.createObjectStore("personal_Notes", {keyPath: "id"});
+            const todo_Notes = DB.createObjectStore("todo_Notes", {keyPath: "id"});
+
+
+            //Since this is Asyncrhonous, creating it doesnt mean it is ready to use.
+
+            
+            alert("onupgradeneeded is called");
+            //here we ceate an obJectStore
+            //This can now the table
+
+            //const db = event.target.result;
+            //db.createObjectStore("notes", {keyPath: "id"});
+        };
+
+        //on success
+        request.onsuccess = e => {
+            const db = e.target.result;
+            alert( `onsuccess is called with db: ${db.name}`);
+
+
+        };
+
+        //on error
+        request.onerror = e => {
+            alert(`error ${e.target.errorCode} was found here`);
+        };
+    }
+    </script>
+</body>
+</html>
